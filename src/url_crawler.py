@@ -7,33 +7,28 @@ class UrlCrawler:
     def __init__(self):
         pass
 
-    def crawl_list(self, urls, search_terms):
+    def crawl(self, url, search_terms):
         response_parser = ResponseParser()
-        results = {}
+        result = {}
 
-        # Iterate list of all URLs to check
-        for url in urls:
-            # print(url)
+        # Iterate list of all search terms
+        for term in search_terms:
+            _term = term.replace(" ", url["separator"])
 
-            results[url["name"]] = {}
-            # Iterate list of all search terms
-            for term in search_terms:
-                # print(term)
+            if "ajax" in url:
+                search_query = url["url"] + url["ajax"](_term)
+            else:
+                search_query = url["url"] + url["search"](_term)
 
-                if "ajax" in url:
-                    search_query = url["url"] + url["ajax"](term)
-                else:
-                    search_query = url["url"] + url["search"](term)
+            # Crawl results of search and parse found links
+            response = self._get_request(search_query)
 
-                # Crawl results of search and parse found links
-                response = self._get_request(search_query)
+            if "ajax" in url:
+                result[term] = response_parser.parse_as_json(url["url"], response)
+            else:
+                result[term] = response_parser.parse_as_html(url["url"], response)
 
-                if "ajax" in url:
-                    results[url["name"]][term] = response_parser.parse_as_json(url["url"], response)
-                else:
-                    results[url["name"]][term] = response_parser.parse_as_html(url["url"], response)
-
-        return results
+        return result
 
     ##########
     # Helper #
@@ -45,12 +40,16 @@ class UrlCrawler:
             r = requests.get(url)#, timeout=3)
             r.raise_for_status()
         except requests.exceptions.HTTPError as errh:
+            print("Http Error:", errh)
             _logger.warning("Http Error:", errh)
         except requests.exceptions.ConnectionError as errc:
+            print("Error Connecting:", errc)
             _logger.warning("Error Connecting:", errc)
         except requests.exceptions.Timeout as errt:
+            print("Timeout Error:", errt)
             _logger.warning("Timeout Error:", errt)
         except requests.exceptions.RequestException as err:
+            print("OOps: Something Else", err)
             _logger.warning("OOps: Something Else", err)
 
         return r

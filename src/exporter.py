@@ -27,25 +27,26 @@ class Exporter:
                     for url_obj in term_obj["link_list"]:
                         csv_w.writerow(map(lambda x: url_obj.get(x, ""), columns))
 
-    def export_html(self, urls_json):
+    def export_html(self, name, results):
         if not os.path.exists(OUT_DIR):
             os.makedirs(OUT_DIR)
 
-        for medium, results in urls_json.items():
+        # for medium, results in urls_json.items():
 
-            first = list(results.keys())[0]
-            # TODO
-            # columns = [x for row in results[first]["link_list"] for x in row.keys()]
-            # columns = list(set(columns))
-            columns = ["date", "title", "url"]
+        # first = list(results.keys())[0]
+        # TODO
+        # columns = [x for row in results[first]["link_list"] for x in row.keys()]
+        # columns = list(set(columns))
+        columns = ["date", "title", "url"]
 
-            file_path = str(OUT_DIR / f"{medium}.html")
-            with open(file_path, 'w', encoding="utf-8") as fou:
-                html_res = ""
-                for term, term_obj in results.items():
-                    html_res += f"<h1>{term}</h1>"
-                    html_res += self._add_html_table(columns, term_obj["link_list"])
-                fou.write(html_res)
+        file_path = str(OUT_DIR / f"{name}.html")
+        with open(file_path, 'w', encoding="utf-8") as fou:
+            html_res = ""
+            for term, term_obj in results.items():
+                # assert term_obj["link_list"], f"Error {term}"
+                html_res += f"<h1>{term}</h1>"
+                html_res += self._add_html_table(columns, term_obj["link_list"])
+            fou.write(html_res)
 
     def _add_html_table(self, h_row, rows):
         table = "<table>"

@@ -3,3 +3,4 @@
 ## TODO
 
 - Parse datetime
+- separator character must be replaced when it is used in the query (+)

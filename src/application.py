@@ -9,11 +9,18 @@ class MainApp:
 
     def run(self):
         url_crawler = UrlCrawler()
-        results = url_crawler.crawl_list(URLS, SEARCH_TERMS)
+        # Iterate list of all URLs to check
+        # results = {}
 
-        exporter = Exporter()
-        exporter.export_csv(results)
-        exporter.export_html(results)
+        for url in URLS:
+            print(f"Now processing {url['name']}")
+
+            # results[url["name"]] = url_crawler.crawl(url, SEARCH_TERMS)
+            result = url_crawler.crawl(url, SEARCH_TERMS)
+
+            exporter = Exporter()
+            # exporter.export_csv(result)
+            exporter.export_html(url["name"], result)
 
 ###################################################################################################
 # Main
