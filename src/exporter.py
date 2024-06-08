@@ -1,5 +1,4 @@
 import csv
-import os
 from config import OUT_DIR
 
 
@@ -7,10 +6,10 @@ class Exporter:
     def __init__(self):
         pass
 
+    ###############################################################################################
+    # CSV exporter
+    ###############################################################################################
     def export_csv(self, urls_json):
-        if not os.path.exists(OUT_DIR):
-            os.makedirs(OUT_DIR)
-
         for medium, results in urls_json.items():
 
             first = list(results.keys())[0]
@@ -27,9 +26,12 @@ class Exporter:
                     for url_obj in term_obj["link_list"]:
                         csv_w.writerow(map(lambda x: url_obj.get(x, ""), columns))
 
+    ###############################################################################################
+    # HTML exporter
+    ###############################################################################################
     def export_html(self, name, results):
-        if not os.path.exists(OUT_DIR):
-            os.makedirs(OUT_DIR)
+        if not results:
+            return
 
         # for medium, results in urls_json.items():
 

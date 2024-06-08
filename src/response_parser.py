@@ -3,6 +3,8 @@ try:
     from BeautifulSoup import BeautifulSoup
 except ImportError:
     from bs4 import BeautifulSoup
+from config import IGNORE_ADDS
+import json
 
 class ResponseParser:
     def __init__(self):
@@ -12,6 +14,15 @@ class ResponseParser:
         # Save list of links to a dictionary
         # print(response.text)
         res_json = response.json()
+
+        return {
+            "link_list": self.search_for_links(main_url, res_json)
+        }
+
+    def parse_as_text(self, main_url: str, response):
+        # Save list of links to a dictionary
+        # print(response.text)
+        res_json = json.loads(response)
 
         return {
             "link_list": self.search_for_links(main_url, res_json)
@@ -35,7 +46,7 @@ class ResponseParser:
             }
             if "url" in url_obj:
                 new_url_obj["url"] = url_obj["url"]
-                if not url_obj["url"].startswith("https:"):
+                if not url_obj["url"].startswith("https:") and not url_obj["url"].startswith("http:"):
                     new_url_obj["url"] = main_url + url_obj["url"]
 
             if "datetime" in url_obj:
@@ -46,6 +57,11 @@ class ResponseParser:
                 new_url_obj["date"] = url_obj["publicationDate"]
             elif "publish_date" in url_obj:
                 new_url_obj["date"] = str(url_obj["publish_date"])
+            elif "richSnippet" in url_obj and "metatags" in url_obj["richSnippet"] and "date" in url_obj["richSnippet"]["metatags"]:
+                new_url_obj["date"] = str(url_obj["richSnippet"]["metatags"]["date"])
+            elif "content" in url_obj:
+                # new_url_obj["date"] = url_obj["content"].split(" ")[0]
+                new_url_obj["date"] = url_obj["contentNoFormatting"].split("...")[0]
 
             # TODO
             # new_url_obj["date"] = str(parser.parse(new_url_obj["date"]))
@@ -54,6 +70,12 @@ class ResponseParser:
                 new_url_obj["title"] = url_obj["title"]
             elif "headline" in url_obj:
                 new_url_obj["title"] = url_obj["headline"]
+
+            # Bild
+            # new_url_obj["text"] = url_obj["content"]
+
+            if new_url_obj["title"] is None:
+                continue
 
             new_url_list.append(new_url_obj)
         return new_url_list
@@ -96,7 +118,7 @@ class ResponseParser:
             url = elem.find('a', href=True)
             title = elem.find('span', attrs={'class': 'result-title'}).a.contents[0]
 
-            if not url['href'].startswith("https:"):
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
                 url['href'] = main_url + url['href']
 
             new_url_obj = {
@@ -186,6 +208,180 @@ class ResponseParser:
 
             new_url_obj = {
                 "date": None,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "noz.de" specific classes
+        for elem in parsed_html.body.find_all('div', attrs={'class': 'article__teaser'}):
+            url = elem.find('a', attrs={'class': 'article__teaser__sub-headline--wrapper'}, href=True)
+            if url is None:
+                continue
+
+            title = url.find('h3', attrs={'class': 'article__teaser__headline'}).contents[0]
+            infos = elem.find('div', attrs={'class': 'article__teaser__info'}).find_all('span')
+            if len(infos) == 2:
+                date = infos[1].contents[0]
+            else:
+                date = None
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "fachportal-paedagogik.de" specific classes
+        for elem in parsed_html.body.find_all('span', attrs={'class': 'book-list-item'}):
+            url = elem.find('a', href=True)
+            if url is None:
+                continue
+
+            title = url.contents[0]
+
+            date = elem.find('span', attrs={'class': 'a5-book-list-item-year'}).contents[0]
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "taz.de" specific classes
+        for elem in parsed_html.body.find_all('li', attrs={'class': 'elaborate'}):
+            url = elem.find('a', href=True, attrs={'class': 'article'})
+            if url is None:
+                continue
+
+            title = url.find('h3').contents[0]
+
+            date = elem.find('li', attrs={'class': 'date'}).contents[0]
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "stuttgarter-zeitung.de" specific classes
+        for elem in parsed_html.body.find_all('div', attrs={'class': 'item'}):
+            url = elem.find('a', href=True, attrs={'class': 'data'})
+            if url is None:
+                continue
+
+            title = url["title"]
+
+            date = elem.find('time', attrs={'class': 'article-date-time'}).contents[0]
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "merkur.de" specific classes
+        for elem in parsed_html.body.find_all('div', attrs={'class': ['id-LB-e--XL6_0c', 'id-LB-e--XL6_6']}):
+            # Add can be found via attrs id-Teaser-el--proBEEP
+            if IGNORE_ADDS and elem.find(attrs={'class': "id-Teaser-el--proBEEP"}):
+                continue
+
+            url = elem.find('a', href=True, attrs={'class': 'id-LinkOverlay-link'})
+            if url is None:
+                continue
+
+            title = url.contents[0]
+
+            # date = elem.find('time', attrs={'class': 'article-date-time'}).contents[0]
+            date = None
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "bildungsserver.de" specific classes
+        for list in parsed_html.body.find_all('div', attrs={'class': "ym-gbox-left"}):
+            for elem in list.find_all('dt'):
+                url = elem.find('a', href=True)
+                if url is None:
+                    continue
+
+                title = url.find(attrs={'class': "meta_gesamt_title"}).contents[0]
+
+                # date = elem.find('time', attrs={'class': 'article-date-time'}).contents[0]
+                date = None
+
+                if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                    url['href'] = main_url + url['href']
+
+                new_url_obj = {
+                    "date": date,
+                    "title": title,
+                    "url": url['href'],
+                }
+                new_url_list.append(new_url_obj)
+
+        # "e-teaching.org" specific classes
+        for elem in parsed_html.body.find_all('article', attrs={'class': "row"}):
+            url = elem.find('a', attrs={'class': "list-group-item"}, href=True)
+            if url is None:
+                continue
+
+            title = url.contents[0]
+
+            date = None
+
+            text = elem.find('a', attrs={'class': "page-link"}, href=True).contents[0]
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
+                "title": title,
+                "url": url['href'],
+            }
+            new_url_list.append(new_url_obj)
+
+        # "fr.de" specific classes
+        for elem in parsed_html.body.find_all('div', attrs={'class': "id-LinkOverlay"}):
+            url = elem.find('a', attrs={'class': "id-LinkOverlay-link"}, href=True)
+            if url is None:
+                continue
+
+            title = url.contents[0]
+
+            date = elem.find('span', attrs={'class': "id-DateTime-date"}).contents[0]
+
+            text = elem.find('span', attrs={'class': "id-Teaser-el-content-text-text"}).contents[0]
+
+            if not url['href'].startswith("https:") and not url['href'].startswith("http:"):
+                url['href'] = main_url + url['href']
+
+            new_url_obj = {
+                "date": date,
                 "title": title,
                 "url": url['href'],
             }
