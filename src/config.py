@@ -29,3 +29,6 @@ locale.setlocale(locale.LC_ALL, "deu_deu")
 class LocaleParserInfo(parser.parserinfo):
     WEEKDAYS = list(zip(calendar.day_abbr, calendar.day_name))
     MONTHS = list(zip(calendar.month_abbr, calendar.month_name))[1:]
+
+EXPORT_HTML = True
+EXPORT_CSV = False

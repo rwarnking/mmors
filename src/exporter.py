@@ -9,22 +9,23 @@ class Exporter:
     ###############################################################################################
     # CSV exporter
     ###############################################################################################
-    def export_csv(self, urls_json):
-        for medium, results in urls_json.items():
+    def export_csv(self, url, results):
+        first = list(results.keys())[0]
+        columns = ["term"]
+        columns += [x for row in results[first]["link_list"] for x in row.keys()]
+        columns = list(set(columns))
 
-            first = list(results.keys())[0]
-            columns = [x for row in results[first]["link_list"] for x in row.keys()]
-            columns = list(set(columns))
+        file_path = str(OUT_DIR / f"{url['name']}.csv")
+        with open(file_path, 'w', newline="", encoding="utf-8") as fou:
+            csv_w = csv.writer(fou)
+            csv_w.writerow(columns)
 
-            file_path = str(OUT_DIR / f"{medium}.csv")
-            with open(file_path, 'w', encoding="utf-8") as fou:
-                csv_w = csv.writer(fou)
-                csv_w.writerow(columns)
-
-                # TODO add term to csv
-                for term, term_obj in results.items():
-                    for url_obj in term_obj["link_list"]:
-                        csv_w.writerow(map(lambda x: url_obj.get(x, ""), columns))
+            for term, term_obj in results.items():
+                filler = [""] * len(columns)
+                csv_w.writerow(filler)
+                for url_obj in term_obj["link_list"]:
+                    url_obj["term"] = term
+                    csv_w.writerow(map(lambda x: url_obj.get(x, ""), columns))
 
     ###############################################################################################
     # HTML exporter
@@ -33,12 +34,6 @@ class Exporter:
         if not results:
             return
 
-        # for medium, results in urls_json.items():
-
-        # first = list(results.keys())[0]
-        # TODO
-        # columns = [x for row in results[first]["link_list"] for x in row.keys()]
-        # columns = list(set(columns))
         columns = []
         for key in url["response"]["keys"]:
             columns.append(key)
@@ -47,7 +42,6 @@ class Exporter:
         with open(file_path, 'w', encoding="utf-8") as fou:
             html_res = ""
             for term, term_obj in results.items():
-                # assert term_obj["link_list"], f"Error {term}"
                 html_res += f"<h1>{term}</h1>"
                 html_res += self._add_html_table(columns, term_obj["link_list"])
             fou.write(html_res)

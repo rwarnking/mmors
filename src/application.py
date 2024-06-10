@@ -2,6 +2,7 @@ from url_list import URLS
 from term_list import SEARCH_TERMS
 from url_crawler import UrlCrawler
 from exporter import Exporter
+from config import EXPORT_CSV, EXPORT_HTML
 
 class MainApp:
     def __init__(self):
@@ -18,8 +19,10 @@ class MainApp:
 
             result = url_crawler.crawl(url, SEARCH_TERMS)
 
-            # exporter.export_csv(result)
-            exporter.export_html(url, result)
+            if EXPORT_CSV:
+                exporter.export_csv(url, result)
+            if EXPORT_HTML:
+                exporter.export_html(url, result)
 
     def _validate(self, url):
         assert "name" in url, f"Missing name in {url}"

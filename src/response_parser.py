@@ -28,7 +28,6 @@ class ResponseParser:
 
     def parse_as_text(self, main_url: str, response, list_keys, keys):
         # Save list of links to a dictionary
-        # print(response.text)
         res_json = json.loads(response)
 
         for key in list_keys:
