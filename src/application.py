@@ -22,13 +22,14 @@ class MainApp:
             result = url_crawler.crawl(url, SEARCH_TERMS)
 
             # exporter.export_csv(result)
-            exporter.export_html(url["name"], result)
+            exporter.export_html(url, result)
 
     def _validate(self, url):
         assert "name" in url, f"Missing name in {url}"
-        assert "url" in url, f"Missing url in {url}"
-        assert "search" in url or "ajax" in url, f"Missing ajax or search in {url}"
-        assert "separator" in url, f"Missing separator in {url}"
+        assert "page_url" in url, f"Missing page_url in {url}"
+        assert "request" in url, f"Missing request in {url}"
+        # TODO further validation
+        assert "response" in url, f"Missing response in {url}"
 
 ###################################################################################################
 # Main

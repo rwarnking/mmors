@@ -10,75 +10,139 @@ class ResponseParser:
     def __init__(self):
         pass
 
-    def parse_as_json(self, main_url: str, response):
+    def parse_as_json(self, main_url: str, response, list_keys, keys):
         # Save list of links to a dictionary
         # print(response.text)
         res_json = response.json()
 
+        for key in list_keys:
+            res_json = res_json[key]
+
         return {
-            "link_list": self.search_for_links(main_url, res_json)
+            "link_list": self.search_for_links(main_url, res_json, keys)
         }
 
-    def parse_as_text(self, main_url: str, response):
+    def parse_as_text(self, main_url: str, response, keys):
         # Save list of links to a dictionary
         # print(response.text)
         res_json = json.loads(response)
 
         return {
-            "link_list": self.search_for_links(main_url, res_json)
+            "link_list": self.search_for_links(main_url, res_json, keys)
         }
 
-    def search_for_links(self, main_url: str, res_json):
-        url_list = []
-        self._walk_trough_json(res_json, url_list)
-        url_list = self._reduce_result(main_url, url_list)
+    def search_for_links(self, main_url: str, res_json, keys):
+        # url_list = []
+        # self._walk_trough_json(res_json, url_list)
+        url_list = self._reduce_result(main_url, res_json, keys)
         # print(url_list)
         return url_list
 
-    def _reduce_result(self, main_url: str, url_list):
+    def _reduce_result(self, main_url: str, url_list, data_fields):
         new_url_list = []
 
         for url_obj in url_list:
-            new_url_obj = {
-                "date": None,
-                "title": None,
-                "url": None,
-            }
-            if "url" in url_obj:
-                new_url_obj["url"] = url_obj["url"]
-                if not url_obj["url"].startswith("https:") and not url_obj["url"].startswith("http:"):
-                    new_url_obj["url"] = main_url + url_obj["url"]
+            new_url_obj = {}
 
-            if "datetime" in url_obj:
-                new_url_obj["date"] = url_obj["datetime"]
-            elif "date" in url_obj:
-                new_url_obj["date"] = url_obj["date"]
-            elif "publicationDate" in url_obj:
-                new_url_obj["date"] = url_obj["publicationDate"]
-            elif "publish_date" in url_obj:
-                new_url_obj["date"] = str(url_obj["publish_date"])
-            elif "richSnippet" in url_obj and "metatags" in url_obj["richSnippet"] and "date" in url_obj["richSnippet"]["metatags"]:
-                new_url_obj["date"] = str(url_obj["richSnippet"]["metatags"]["date"])
-            elif "content" in url_obj:
-                # new_url_obj["date"] = url_obj["content"].split(" ")[0]
-                new_url_obj["date"] = url_obj["contentNoFormatting"].split("...")[0]
+            for field, keys in data_fields.items():
+                tmp_obj = url_obj
+                for key in keys:
+                    tmp_obj = tmp_obj[key]
+                new_url_obj[field] = str(tmp_obj)
 
-            # TODO
-            # new_url_obj["date"] = str(parser.parse(new_url_obj["date"]))
+            # TODO add date processing
 
-            if "title" in url_obj:
-                new_url_obj["title"] = url_obj["title"]
-            elif "headline" in url_obj:
-                new_url_obj["title"] = url_obj["headline"]
-
-            # Bild
-            # new_url_obj["text"] = url_obj["content"]
-
-            if new_url_obj["title"] is None:
-                continue
+            if "url" in new_url_obj and not new_url_obj["url"].startswith("https:") and not new_url_obj["url"].startswith("http:"):
+                new_url_obj["url"] = main_url + url_obj["url"]
 
             new_url_list.append(new_url_obj)
         return new_url_list
+
+        #     new_url_obj = {
+        #         "date": None,
+        #         "title": None,
+        #         "url": None,
+        #     }
+        #     if "url" in url_obj:
+        #         new_url_obj["url"] = url_obj["url"]
+        #         if not url_obj["url"].startswith("https:") and not url_obj["url"].startswith("http:"):
+        #             new_url_obj["url"] = main_url + url_obj["url"]
+
+        #     if "datetime" in url_obj:
+        #         new_url_obj["date"] = url_obj["datetime"]
+        #     elif "date" in url_obj:
+        #         new_url_obj["date"] = url_obj["date"]
+        #     elif "publicationDate" in url_obj:
+        #         new_url_obj["date"] = url_obj["publicationDate"]
+        #     elif "publish_date" in url_obj:
+        #         new_url_obj["date"] = str(url_obj["publish_date"])
+        #     elif "richSnippet" in url_obj and "metatags" in url_obj["richSnippet"] and "date" in url_obj["richSnippet"]["metatags"]:
+        #         new_url_obj["date"] = str(url_obj["richSnippet"]["metatags"]["date"])
+        #     elif "content" in url_obj:
+        #         # new_url_obj["date"] = url_obj["content"].split(" ")[0]
+        #         new_url_obj["date"] = url_obj["contentNoFormatting"].split("...")[0]
+
+        #     # TODO
+        #     # new_url_obj["date"] = str(parser.parse(new_url_obj["date"]))
+
+        #     if "title" in url_obj:
+        #         new_url_obj["title"] = url_obj["title"]
+        #     elif "headline" in url_obj:
+        #         new_url_obj["title"] = url_obj["headline"]
+
+        #     # Bild
+        #     # new_url_obj["text"] = url_obj["content"]
+
+        #     if new_url_obj["title"] is None:
+        #         continue
+
+        #     new_url_list.append(new_url_obj)
+        # return new_url_list
+
+    # def _reduce_result(self, main_url: str, url_list):
+    #     new_url_list = []
+
+    #     for url_obj in url_list:
+    #         new_url_obj = {
+    #             "date": None,
+    #             "title": None,
+    #             "url": None,
+    #         }
+    #         if "url" in url_obj:
+    #             new_url_obj["url"] = url_obj["url"]
+    #             if not url_obj["url"].startswith("https:") and not url_obj["url"].startswith("http:"):
+    #                 new_url_obj["url"] = main_url + url_obj["url"]
+
+    #         if "datetime" in url_obj:
+    #             new_url_obj["date"] = url_obj["datetime"]
+    #         elif "date" in url_obj:
+    #             new_url_obj["date"] = url_obj["date"]
+    #         elif "publicationDate" in url_obj:
+    #             new_url_obj["date"] = url_obj["publicationDate"]
+    #         elif "publish_date" in url_obj:
+    #             new_url_obj["date"] = str(url_obj["publish_date"])
+    #         elif "richSnippet" in url_obj and "metatags" in url_obj["richSnippet"] and "date" in url_obj["richSnippet"]["metatags"]:
+    #             new_url_obj["date"] = str(url_obj["richSnippet"]["metatags"]["date"])
+    #         elif "content" in url_obj:
+    #             # new_url_obj["date"] = url_obj["content"].split(" ")[0]
+    #             new_url_obj["date"] = url_obj["contentNoFormatting"].split("...")[0]
+
+    #         # TODO
+    #         # new_url_obj["date"] = str(parser.parse(new_url_obj["date"]))
+
+    #         if "title" in url_obj:
+    #             new_url_obj["title"] = url_obj["title"]
+    #         elif "headline" in url_obj:
+    #             new_url_obj["title"] = url_obj["headline"]
+
+    #         # Bild
+    #         # new_url_obj["text"] = url_obj["content"]
+
+    #         if new_url_obj["title"] is None:
+    #             continue
+
+    #         new_url_list.append(new_url_obj)
+    #     return new_url_list
 
     def _walk_trough_json(self, json, url_list):
         if type(json) is dict:
@@ -94,7 +158,54 @@ class ResponseParser:
                         url_list.append(e)
                 self._walk_trough_json(e, url_list)
 
-    def parse_as_html(self, main_url: str, response):
+    def parse_as_html(self, main_url: str, response, list_keys, keys, add_keys=[]):
+        new_url_list = []
+
+        parsed_html = BeautifulSoup(response.text, features="html.parser")
+
+        # TODO multiple list_keys
+        for elem in parsed_html.body.find_all(
+            list_keys[0]["type"],
+            attrs={'class': list_keys[0]["class"]}
+        ):
+            new_url_obj = {}
+
+            if IGNORE_ADDS:
+                for add_key in add_keys:
+                    if elem.find(attrs={'class': add_key}):
+                        continue
+
+            for key, value in keys.items():
+                if key == "elem":
+                    continue
+
+                if value["scope"] == "one":
+                    result = elem.find(
+                        value["type"],
+                        attrs={'class': value["class"]}
+                    )
+                elif value["scope"] == None:
+                    result = elem
+                else:
+                    raise Exception("Error")
+
+                # print(result)
+                new_url_obj[key] = None if not result else value["access"](result)
+
+            if new_url_obj["url"] and not new_url_obj["url"].startswith("https:") and not new_url_obj["url"].startswith("http:"):
+                new_url_obj["url"] = main_url + new_url_obj["url"]
+
+            if new_url_obj["url"] or new_url_obj["title"]:
+                new_url_list.append(new_url_obj)
+
+        return {
+            "link_list": new_url_list
+        }
+
+
+
+
+    def parse_as_html2(self, main_url: str, response):
         new_url_list = []
 
         parsed_html = BeautifulSoup(response.text, features="html.parser")

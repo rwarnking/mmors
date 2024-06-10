@@ -29,7 +29,7 @@ class Exporter:
     ###############################################################################################
     # HTML exporter
     ###############################################################################################
-    def export_html(self, name, results):
+    def export_html(self, url, results):
         if not results:
             return
 
@@ -39,9 +39,11 @@ class Exporter:
         # TODO
         # columns = [x for row in results[first]["link_list"] for x in row.keys()]
         # columns = list(set(columns))
-        columns = ["date", "title", "url"]
+        columns = []
+        for key in url["response"]["keys"]:
+            columns.append(key)
 
-        file_path = str(OUT_DIR / f"{name}.html")
+        file_path = str(OUT_DIR / f"{url['name']}.html")
         with open(file_path, 'w', encoding="utf-8") as fou:
             html_res = ""
             for term, term_obj in results.items():
