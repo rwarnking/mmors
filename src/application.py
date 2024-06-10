@@ -12,13 +12,10 @@ class MainApp:
         exporter = Exporter()
 
         # Iterate list of all URLs to check
-        # results = {}
-
         for url in URLS:
             print(f"Now processing {url['name']}")
             self._validate(url)
 
-            # results[url["name"]] = url_crawler.crawl(url, SEARCH_TERMS)
             result = url_crawler.crawl(url, SEARCH_TERMS)
 
             # exporter.export_csv(result)
