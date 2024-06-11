@@ -9,41 +9,41 @@ class Exporter:
     ###############################################################################################
     # CSV exporter
     ###############################################################################################
-    def export_csv(self, url, results):
-        first = list(results.keys())[0]
+    def export_csv(self, website, search_results):
+        first = list(search_results.keys())[0]
         columns = ["term"]
-        columns += [x for row in results[first]["link_list"] for x in row.keys()]
+        columns += [x for row in search_results[first] for x in row.keys()]
         columns = list(set(columns))
 
-        file_path = str(OUT_DIR / f"{url['name']}.csv")
+        file_path = str(OUT_DIR / f"{website['name']}.csv")
         with open(file_path, 'w', newline="", encoding="utf-8") as fou:
             csv_w = csv.writer(fou)
             csv_w.writerow(columns)
 
-            for term, term_obj in results.items():
+            for term, term_obj in search_results.items():
                 filler = [""] * len(columns)
                 csv_w.writerow(filler)
-                for url_obj in term_obj["link_list"]:
+                for url_obj in term_obj:
                     url_obj["term"] = term
                     csv_w.writerow(map(lambda x: url_obj.get(x, ""), columns))
 
     ###############################################################################################
     # HTML exporter
     ###############################################################################################
-    def export_html(self, url, results):
-        if not results:
+    def export_html(self, website, search_results):
+        if not search_results:
             return
 
         columns = []
-        for key in url["response"]["keys"]:
+        for key in website["response"]["keys"]:
             columns.append(key)
 
-        file_path = str(OUT_DIR / f"{url['name']}.html")
+        file_path = str(OUT_DIR / f"{website['name']}.html")
         with open(file_path, 'w', encoding="utf-8") as fou:
             html_res = ""
-            for term, term_obj in results.items():
+            for term, term_obj in search_results.items():
                 html_res += f"<h1>{term}</h1>"
-                html_res += self._add_html_table(columns, term_obj["link_list"])
+                html_res += self._add_html_table(columns, term_obj)
             fou.write(html_res)
 
     def _add_html_table(self, h_row, rows):

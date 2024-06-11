@@ -10,16 +10,16 @@ class UrlCrawler:
     def __init__(self):
         self.response_parser = ResponseParser()
 
-    def crawl(self, url, search_terms):
-        result = {}
+    def crawl(self, website, search_terms):
+        search_results = {}
 
         # Iterate list of all search terms
         for term in search_terms:
             _term = term
-            for to_repl, replacement in url["request"]["replacements"].items():
+            for to_repl, replacement in website["request"]["replacements"].items():
                 _term = _term.replace(to_repl, replacement)
 
-            request = url["request"]
+            request = website["request"]
             if request["type"] == "get":
                 search_query = request["url"] + request["url_payload"](_term)
                 _logger.info(f"Search Query: {search_query}")
@@ -50,31 +50,29 @@ class UrlCrawler:
                     f.write(response.text)
                     f.close()
 
-                exp_response = url["response"]
-
+                exp_response = website["response"]
                 if exp_response["type"] == "google":
-                    # TODO regex number
                     response = response.text.replace("});", "}").replace("/*O_o*/", "")
                     response = re.sub(r"google.search.cse.api\d*\({", "{", response)
 
-                    result[term] = self.response_parser.parse_as_text(
+                    search_results[term] = self.response_parser.parse_as_text(
                         request["url"],
                         response,
                         exp_response["list_keys"],
                         exp_response["keys"]
                     )
                 elif exp_response["type"] == "json":
-                    result[term] = self.response_parser.parse_as_json(
+                    search_results[term] = self.response_parser.parse_as_json(
                         request["url"], response, exp_response["list_keys"], exp_response["keys"]
                     )
                 elif exp_response["type"] == "html":
                     # TODO improve this
                     if "add_keys" in exp_response:
-                        result[term] = self.response_parser.parse_as_html(
+                        search_results[term] = self.response_parser.parse_as_html(
                             request["url"], response, exp_response["list_keys"], exp_response["keys"], exp_response["add_keys"]
                         )
                     else:
-                        result[term] = self.response_parser.parse_as_html(
+                        search_results[term] = self.response_parser.parse_as_html(
                             request["url"], response, exp_response["list_keys"], exp_response["keys"]
                         )
                 else:
@@ -83,7 +81,7 @@ class UrlCrawler:
             else:
                 _logger.warning(f"Request did not yield valid information. Did not process {url['name']}.")
 
-        return result
+        return search_results
 
     ##########
     # Helper #

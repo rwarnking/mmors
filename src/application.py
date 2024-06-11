@@ -1,4 +1,4 @@
-from url_list import URLS
+from url_list import SEARCH_SITES
 from term_list import SEARCH_TERMS
 from url_crawler import UrlCrawler
 from exporter import Exporter
@@ -13,23 +13,23 @@ class MainApp:
         exporter = Exporter()
 
         # Iterate list of all URLs to check
-        for url in URLS:
-            print(f"Now processing {url['name']}")
-            self._validate(url)
+        for website in SEARCH_SITES:
+            print(f"Now processing {website['name']}")
+            self._validate(website)
 
-            result = url_crawler.crawl(url, SEARCH_TERMS)
+            search_results = url_crawler.crawl(website, SEARCH_TERMS)
 
             if EXPORT_CSV:
-                exporter.export_csv(url, result)
+                exporter.export_csv(website, search_results)
             if EXPORT_HTML:
-                exporter.export_html(url, result)
+                exporter.export_html(website, search_results)
 
-    def _validate(self, url):
-        assert "name" in url, f"Missing name in {url}"
-        assert "page_url" in url, f"Missing page_url in {url}"
-        assert "request" in url, f"Missing request in {url}"
+    def _validate(self, website):
+        assert "name" in website, f"Missing name in {website}"
+        assert "page_url" in website, f"Missing page_url in {website}"
+        assert "request" in website, f"Missing request in {website}"
         # TODO further validation
-        assert "response" in url, f"Missing response in {url}"
+        assert "response" in website, f"Missing response in {website}"
 
 ###################################################################################################
 # Main

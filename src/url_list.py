@@ -1,4 +1,4 @@
-URLS = [
+SEARCH_SITES = [
     {
         "name": "sueddeutsche",
         "page_url": "https://www.sueddeutsche.de",
