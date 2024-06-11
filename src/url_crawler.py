@@ -1,9 +1,10 @@
-import requests
-import re
 import base64
-from config import _logger, DEBUG, DEBUG_DIR
-from response_parser import ResponseParser
+import re
+
+import requests
+from config import DEBUG, DEBUG_DIR, _logger
 from requests.auth import HTTPBasicAuth
+from response_parser import ResponseParser
 
 
 class UrlCrawler:
@@ -43,7 +44,6 @@ class UrlCrawler:
                 # TODO
                 raise Exception("This should not happen!")
 
-
             if response:
                 if DEBUG:
                     f = open(DEBUG_DIR / "debug_response.html", "w", encoding="utf-8")
@@ -56,10 +56,7 @@ class UrlCrawler:
                     response = re.sub(r"google.search.cse.api\d*\({", "{", response)
 
                     search_results[term] = self.response_parser.parse_as_text(
-                        request["url"],
-                        response,
-                        exp_response["list_keys"],
-                        exp_response["keys"]
+                        request["url"], response, exp_response["list_keys"], exp_response["keys"]
                     )
                 elif exp_response["type"] == "json":
                     search_results[term] = self.response_parser.parse_as_json(
@@ -69,17 +66,26 @@ class UrlCrawler:
                     # TODO improve this
                     if "add_keys" in exp_response:
                         search_results[term] = self.response_parser.parse_as_html(
-                            request["url"], response, exp_response["list_keys"], exp_response["keys"], exp_response["add_keys"]
+                            request["url"],
+                            response,
+                            exp_response["list_keys"],
+                            exp_response["keys"],
+                            exp_response["add_keys"],
                         )
                     else:
                         search_results[term] = self.response_parser.parse_as_html(
-                            request["url"], response, exp_response["list_keys"], exp_response["keys"]
+                            request["url"],
+                            response,
+                            exp_response["list_keys"],
+                            exp_response["keys"],
                         )
                 else:
                     # TODO
                     raise Exception("This should not happen!")
             else:
-                _logger.warning(f"Request did not yield valid information. Did not process {url['name']}.")
+                _logger.warning(
+                    f"Request did not yield valid information. Did not process {website['name']}."
+                )
 
         return search_results
 
@@ -94,16 +100,16 @@ class UrlCrawler:
             if _auth:
                 r = requests.get(url, auth=_auth)
             else:
-                r = requests.get(url)#, timeout=3)
+                r = requests.get(url)  # , timeout=3)
             r.raise_for_status()
         except requests.exceptions.HTTPError as errh:
-            _logger.warning("Http Error:", errh)
+            _logger.warning(f"Http Error: {errh}")
         except requests.exceptions.ConnectionError as errc:
-            _logger.warning("Error Connecting:", errc)
+            _logger.warning(f"Error Connecting: {errc}")
         except requests.exceptions.Timeout as errt:
-            _logger.warning("Timeout Error:", errt)
+            _logger.warning(f"Timeout Error: {errt}")
         except requests.exceptions.RequestException as err:
-            _logger.warning("OOps: Something Else", err)
+            _logger.warning(f"OOps: Something Else {err}")
 
         return r
 
@@ -111,16 +117,15 @@ class UrlCrawler:
         r = None
         try:
             # r = requests.get(url, headers={'Accept': 'application/json'})#, timeout=3)
-            r = requests.post(url, payload)#, timeout=3)
+            r = requests.post(url, payload)  # , timeout=3)
             r.raise_for_status()
         except requests.exceptions.HTTPError as errh:
-            _logger.warning("Http Error:", errh)
+            _logger.warning(f"Http Error: {errh}")
         except requests.exceptions.ConnectionError as errc:
-            _logger.warning("Error Connecting:", errc)
+            _logger.warning(f"Error Connecting: {errc}")
         except requests.exceptions.Timeout as errt:
-            _logger.warning("Timeout Error:", errt)
+            _logger.warning(f"Timeout Error: {errt}")
         except requests.exceptions.RequestException as err:
-            _logger.warning("OOps: Something Else", err)
+            _logger.warning(f"OOps: Something Else {err}")
 
         return r
-

@@ -8,7 +8,7 @@
 This is a small python application to crawl search results of different websites.
 
 ## Table of Contents
-- [MMORS](#mmors---massively-manage-online-resource-searches-OR-Manage-Many-Online-Resource-Searches)
+- [MMORS](#mmors---massively-manage-online-resource-searches-or-manage-many-online-resource-searches)
   - [Table of Contents](#table-of-contents)
   - [List of Features](#list-of-features)
   - [Installation](#installation)

@@ -1,8 +1,9 @@
-from url_list import SEARCH_SITES
+from config import EXPORT_CSV, EXPORT_HTML
+from exporter import Exporter
 from term_list import SEARCH_TERMS
 from url_crawler import UrlCrawler
-from exporter import Exporter
-from config import EXPORT_CSV, EXPORT_HTML
+from url_list import SEARCH_SITES
+
 
 class MainApp:
     def __init__(self):
@@ -30,6 +31,7 @@ class MainApp:
         assert "request" in website, f"Missing request in {website}"
         # TODO further validation
         assert "response" in website, f"Missing response in {website}"
+
 
 ###################################################################################################
 # Main

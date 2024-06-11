@@ -1,12 +1,15 @@
 import dateutil.parser as parser
 from dateutil.parser import ParserError
-from dateutil import tz
+
 try:
     from BeautifulSoup import BeautifulSoup
 except ImportError:
     from bs4 import BeautifulSoup
-from config import IGNORE_ADDS, LocaleParserInfo
+
 import json
+
+from config import IGNORE_ADDS, LocaleParserInfo
+
 
 class ResponseParser:
     def __init__(self):
@@ -56,14 +59,18 @@ class ResponseParser:
                     tmp_obj = tmp_obj[key]
                 extracted[field] = str(tmp_obj)
 
-            if "url" in extracted and not extracted["url"].startswith("https:") and not extracted["url"].startswith("http:"):
+            if (
+                "url" in extracted
+                and not extracted["url"].startswith("https:")
+                and not extracted["url"].startswith("http:")
+            ):
                 extracted["url"] = main_url + s_result["url"]
 
             if "date" in extracted and extracted["date"]:
                 try:
                     extracted["date"] = parser.parse(
                         extracted["date"],
-                        parserinfo=LocaleParserInfo()
+                        parserinfo=LocaleParserInfo(),
                     ).isoformat(sep=" ")
                 except ParserError:
                     # TODO
@@ -93,14 +100,13 @@ class ResponseParser:
 
         # TODO multiple list_keys
         for elem in parsed_html.body.find_all(
-            list_keys[0]["type"],
-            attrs={'class': list_keys[0]["class"]}
+            list_keys[0]["type"], attrs={"class": list_keys[0]["class"]}
         ):
             extracted = {}
 
             if IGNORE_ADDS:
                 for add_key in add_keys:
-                    if elem.find(attrs={'class': add_key}):
+                    if elem.find(attrs={"class": add_key}):
                         continue
 
             for key, value in data_fields.items():
@@ -108,26 +114,25 @@ class ResponseParser:
                     continue
 
                 if value["scope"] == "one":
-                    _result = elem.find(
-                        value["type"],
-                        attrs={'class': value["class"]}
-                    )
-                elif value["scope"] == None:
+                    _result = elem.find(value["type"], attrs={"class": value["class"]})
+                elif value["scope"] is None:
                     _result = elem
                 else:
                     raise Exception("Error")
 
                 extracted[key] = None if not _result else value["access"](_result)
 
-            if extracted["url"] and not extracted["url"].startswith("https:") and not extracted["url"].startswith("http:"):
+            if (
+                extracted["url"]
+                and not extracted["url"].startswith("https:")
+                and not extracted["url"].startswith("http:")
+            ):
                 extracted["url"] = main_url + extracted["url"]
 
             if "date" in extracted and extracted["date"]:
                 try:
                     extracted["date"] = parser.parse(
-                        extracted["date"],
-                        parserinfo=LocaleParserInfo(),
-                        fuzzy=True
+                        extracted["date"], parserinfo=LocaleParserInfo(), fuzzy=True,
                     ).isoformat(sep=" ")
                 except ParserError:
                     # TODO

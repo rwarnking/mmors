@@ -1,4 +1,5 @@
 import csv
+
 from config import OUT_DIR
 
 
@@ -16,7 +17,7 @@ class Exporter:
         columns = list(set(columns))
 
         file_path = str(OUT_DIR / f"{website['name']}.csv")
-        with open(file_path, 'w', newline="", encoding="utf-8") as fou:
+        with open(file_path, "w", newline="", encoding="utf-8") as fou:
             csv_w = csv.writer(fou)
             csv_w.writerow(columns)
 
@@ -39,7 +40,7 @@ class Exporter:
             columns.append(key)
 
         file_path = str(OUT_DIR / f"{website['name']}.html")
-        with open(file_path, 'w', encoding="utf-8") as fou:
+        with open(file_path, "w", encoding="utf-8") as fou:
             html_res = ""
             for term, term_obj in search_results.items():
                 html_res += f"<h1>{term}</h1>"
@@ -73,13 +74,13 @@ class Exporter:
         table_row = "<tr>"
         for e in row.values():
             if e is None:
-                table_row += f'<td>{e}</td>'
+                table_row += f"<td>{e}</td>"
                 continue
 
             if e.startswith("http"):
                 table_row += f'<td><a href="{e}">{e}</a></td>'
             else:
-                table_row += f'<td>{e}</td>'
+                table_row += f"<td>{e}</td>"
 
         table_row += "</tr>"
         return table_row

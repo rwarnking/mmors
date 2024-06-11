@@ -1,9 +1,11 @@
-from pathlib import Path
-import dateutil.parser as parser
 import calendar
 import locale
 import logging
 import os
+from pathlib import Path
+from typing import List, Tuple
+
+import dateutil.parser as parser
 
 DEBUG = True
 
@@ -26,9 +28,12 @@ IGNORE_ADDS = True
 # TODO helper class
 # TODO care this might vary between operating systems
 locale.setlocale(locale.LC_ALL, "deu_deu")
+
+
 class LocaleParserInfo(parser.parserinfo):
-    WEEKDAYS = list(zip(calendar.day_abbr, calendar.day_name))
+    WEEKDAYS: List[Tuple[str, ...]] = list(zip(calendar.day_abbr, calendar.day_name))
     MONTHS = list(zip(calendar.month_abbr, calendar.month_name))[1:]
+
 
 EXPORT_HTML = True
 EXPORT_CSV = False

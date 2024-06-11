@@ -23,8 +23,8 @@ SEARCH_SITES = [
                 "desc": ["content", "teaserText"],
                 "topic": ["trackingdata", "main_topic"],
                 "section": ["trackingdata", "section"],
-            }
-        }
+            },
+        },
     },
     # TODO tagesschau returns also images and videos that are ignored here
     {
@@ -48,8 +48,8 @@ SEARCH_SITES = [
                 "title": ["headline"],
                 "url": ["url"],
                 "desc": ["description"],
-            }
-        }
+            },
+        },
     },
     {
         "name": "spiegel",
@@ -58,7 +58,11 @@ SEARCH_SITES = [
         "request": {
             "type": "get",
             "url": "https://www.spiegel.de",
-            "url_payload": lambda x: f"/services/sitesearch/search?segments=spon%2Cspon_paid%2Cspon_international%2Cmmo%2Cmmo_paid%2Chbm%2Chbm_paid%2Celf%2Celf_paid&q={x}",
+            "url_payload": lambda x: (
+                "/services/sitesearch/search?"
+                "segments=spon%2Cspon_paid%2Cspon_international%2Cmmo%2Cmmo_paid"
+                f"%2Chbm%2Chbm_paid%2Celf%2Celf_paid&q={x}"
+            ),
             "replacements": {
                 " ": "%2B",
                 "/": "%2F",
@@ -74,8 +78,8 @@ SEARCH_SITES = [
                 "url": ["url"],
                 "desc": ["intro"],
                 "access": ["access_level"],
-            }
-        }
+            },
+        },
     },
     {
         "name": "faz",
@@ -84,7 +88,10 @@ SEARCH_SITES = [
         "request": {
             "type": "get",
             "url": "https://www.faz.net",
-            "url_payload": lambda x: f"/api/faz-content-search?page=1&paid_content=include&q={x}&rows=20&sort_by=date&sort_order=desc",
+            "url_payload": lambda x: (
+                "/api/faz-content-search?page=1&"
+                f"paid_content=include&q={x}&rows=20&sort_by=date&sort_order=desc"
+            ),
             "replacements": {
                 " ": "+",
                 "/": "%2F",
@@ -100,8 +107,8 @@ SEARCH_SITES = [
                 "desc": ["teaser"],
                 "access": ["faz_plus"],
                 "section": ["section"],
-            }
-        }
+            },
+        },
     },
     {
         "name": "zeit",
@@ -133,33 +140,33 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "time",
                     "class": "zon-teaser__datetime",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "span",
                     "class": "zon-teaser__title",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "zon-teaser__link",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "p",
                     "class": "zon-teaser__summary",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "access": {
                     "scope": "one",
                     "type": "svg",
                     "class": "zplus-logo",
-                    "access": lambda x: x["aria-label"]
+                    "access": lambda x: x["aria-label"],
                 },
-            }
+            },
         },
     },
     {
@@ -185,8 +192,8 @@ SEARCH_SITES = [
                 "desc": ["intro"],
                 "access": ["premium"],
                 "section": ["rootSection"],
-            }
-        }
+            },
+        },
     },
     {
         "name": "ihk-position",
@@ -218,21 +225,21 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "span",
                     "class": "elementor-post-date",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "a",
                     "class": None,
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": None,
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
-            }
+            },
         },
     },
     {
@@ -265,27 +272,27 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "span",
                     "class": "updated",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "a",
                     "class": "fusion-rollover-link",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "fusion-rollover-link",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "div",
                     "class": "fusion-post-content-container",
-                    "access": lambda x: x.p.get_text()
+                    "access": lambda x: x.p.get_text(),
                 },
-            }
+            },
         },
     },
     # TODO add page variable
@@ -319,43 +326,53 @@ SEARCH_SITES = [
                     "scope": None,
                     "type": "",
                     "class": "",
-                    "access": lambda x: x["postdate"]
+                    "access": lambda x: x["postdate"],
                 },
                 "title": {
                     "scope": "one",
                     "type": "h3",
                     "class": "u-headline u-teaser-card__headline",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "u-teaser-card__link",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "p",
                     "class": "u-teaser-card__text",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "section": {
                     "scope": "one",
                     "type": "a",
                     "class": "u-teaser-card__kicker",
-                    "access": lambda x: x.span.get_text()
+                    "access": lambda x: x.span.get_text(),
                 },
-            }
+            },
         },
     },
     {
         "name": "bildungsklick",
         "page_url": "https://bildungsklick.de",
-        "search_url": lambda x: f"/suche?tx_elastica_pi1%5BdateFrom%5D=&tx_elastica_pi1%5BdateTo%5D=&tx_elastica_pi1%5Bfacets%5D%5Bnews%5D=&tx_elastica_pi1%5Bkeyword%5D={x}&tx_elastica_pi1%5Bsorting%5D=0&tx_elastica_pi1%5Bvideo%5D=&cHash=f8efd2f1fd21f0ea34021c56c65f8c78",
+        "search_url": lambda x: (
+            "/suche?tx_elastica_pi1%5BdateFrom%5D=&tx_elastica_pi1%5BdateTo%5D="
+            f"&tx_elastica_pi1%5Bfacets%5D%5Bnews%5D=&tx_elastica_pi1%5Bkeyword%5D={x}"
+            "&tx_elastica_pi1%5Bsorting%5D=0&tx_elastica_pi1%5Bvideo%5D="
+            "&cHash=f8efd2f1fd21f0ea34021c56c65f8c78"
+        ),
         "request": {
             "type": "get",
             "url": "https://bildungsklick.de",
-            "url_payload": lambda x: f"/suche?tx_elastica_pi1%5BdateFrom%5D=&tx_elastica_pi1%5BdateTo%5D=&tx_elastica_pi1%5Bfacets%5D%5Bnews%5D=&tx_elastica_pi1%5Bkeyword%5D={x}&tx_elastica_pi1%5Bsorting%5D=0&tx_elastica_pi1%5Bvideo%5D=&cHash=f8efd2f1fd21f0ea34021c56c65f8c78",
+            "url_payload": lambda x: (
+                "/suche?tx_elastica_pi1%5BdateFrom%5D=&tx_elastica_pi1%5BdateTo%5D="
+                f"&tx_elastica_pi1%5Bfacets%5D%5Bnews%5D=&tx_elastica_pi1%5Bkeyword%5D={x}"
+                "&tx_elastica_pi1%5Bsorting%5D=0&tx_elastica_pi1%5Bvideo%5D="
+                "&cHash=f8efd2f1fd21f0ea34021c56c65f8c78"
+            ),
             "replacements": {
                 " ": "%20",
                 "/": "",
@@ -378,39 +395,39 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "span",
                     "class": "m-news-swiper__date",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "p",
                     "class": "bodytext",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "section": {
                     "scope": "one",
                     "type": "span",
                     "class": "e-header-kicker__obtrusive",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "type": {
                     "scope": "one",
                     "type": "span",
                     "class": "m-news-swiper__category",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
-            }
+            },
         },
     },
     {
@@ -443,27 +460,27 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "a",
                     "class": "search-result-page-link",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "search-result-page-link",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "p",
                     "class": "search-result-hightlight-text",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "type": {
                     "scope": "one",
                     "type": "div",
                     "class": "search-result-meta",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
-            }
+            },
         },
     },
     # TODO date and section have a problem with kolumnen (try term "blau rot")
@@ -497,37 +514,45 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "div",
                     "class": "article__teaser__info",
-                    "access": lambda x: x.select('div > span')[1].get_text()
+                    "access": lambda x: x.select("div > span")[1].get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "h3",
                     "class": "article__teaser__headline",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "article__teaser__sub-headline--wrapper",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "section": {
                     "scope": "one",
                     "type": "div",
                     "class": "article__teaser__info",
-                    "access": lambda x: x.span.get_text()
+                    "access": lambda x: x.span.get_text(),
                 },
-            }
+            },
         },
     },
     {
         "name": "fachportal-paedagogik",
         "page_url": "https://www.fachportal-paedagogik.de",
-        "search_url": lambda x: f"/suche/trefferliste.html?searchIn%5B%5D=fis&searchIn%5B%5D=fdz&searchIn%5B%5D=fin&feldname1=Freitext&bool1=AND&suche=einfach&feldinhalt1={x}&ur_wert_feldinhalt1einfach={x}",
+        "search_url": lambda x: (
+            "/suche/trefferliste.html?searchIn%5B%5D=fis&searchIn%5B%5D=fdz&searchIn%5B%5D=fin"
+            f"&feldname1=Freitext&bool1=AND&suche=einfach&feldinhalt1={x}"
+            f"&ur_wert_feldinhalt1einfach={x}"
+        ),
         "request": {
             "type": "get",
             "url": "https://www.fachportal-paedagogik.de",
-            "url_payload": lambda x: f"/suche/trefferliste.html?searchIn%5B%5D=fis&searchIn%5B%5D=fdz&searchIn%5B%5D=fin&feldname1=Freitext&bool1=AND&suche=einfach&feldinhalt1={x}&ur_wert_feldinhalt1einfach={x}",
+            "url_payload": lambda x: (
+                "/suche/trefferliste.html?searchIn%5B%5D=fis&searchIn%5B%5D=fdz"
+                "&searchIn%5B%5D=fin&feldname1=Freitext&bool1=AND&suche=einfach"
+                f"&feldinhalt1={x}&ur_wert_feldinhalt1einfach={x}"
+            ),
             "replacements": {
                 " ": "+and+",
                 "/": "%2F",
@@ -550,21 +575,21 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "span",
                     "class": "a5-book-list-item-year",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
-            }
+            },
         },
     },
     {
@@ -597,25 +622,25 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "li",
                     "class": "date",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "h3",
                     "class": "",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "article",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "p",
                     "class": "snippet",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 # "type": {
                 #     "scope": "one",
@@ -623,7 +648,7 @@ SEARCH_SITES = [
                 #     "class": "extension",
                 #     "access": lambda x: x.find(lambda y: y.name == "p" and "Ressort:" in y.text).get_text()
                 # },
-            }
+            },
         },
     },
     {
@@ -656,33 +681,33 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "time",
                     "class": "article-date-time",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "title": {
                     "scope": "one",
                     "type": "a",
                     "class": "data",
-                    "access": lambda x: x["title"]
+                    "access": lambda x: x["title"],
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "data",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "div",
                     "class": "appetizer-text",
-                    "access": lambda x: None if len (x.span.contents) < 1 else x.span.get_text()
+                    "access": lambda x: None if len(x.span.contents) < 1 else x.span.get_text(),
                 },
                 "access": {
                     "scope": "one",
                     "type": "a",
                     "class": "data",
-                    "access": lambda x: x["data-paidcontent"]
+                    "access": lambda x: x["data-paidcontent"],
                 },
-            }
+            },
         },
     },
     {
@@ -707,7 +732,7 @@ SEARCH_SITES = [
                 {
                     "scope": "all",
                     "type": "div",
-                    "class": ['id-LB-e--XL6_0c', 'id-LB-e--XL6_6'],
+                    "class": ["id-LB-e--XL6_0c", "id-LB-e--XL6_6"],
                 },
             ],
             "keys": {
@@ -715,38 +740,46 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "a",
                     "class": "id-LinkOverlay-link",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "id-LinkOverlay-link",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "span",
                     "class": "id-Teaser-el-content-text-text",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "section": {
                     "scope": "one",
                     "type": "span",
                     "class": "id-Teaser-el-content-meta-item-category",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
             },
-            "add_keys": ["id-Teaser-el--proBEEP"]
+            "add_keys": ["id-Teaser-el--proBEEP"],
         },
     },
     {
         "name": "bildungsserver",
         "page_url": "https://www.bildungsserver.de",
-        "search_url": lambda x: f"/metasuche/metasuche.html?feldinhalt1={x}&feldname1=Freitext&gruppen%5B%5D=Deutscher+Bildungsserver&fisOnline=y&sucheMitBoost=y&fieldLenNorm=n&bool1=AND&DBS=1&art=einfach",
+        "search_url": lambda x: (
+            f"/metasuche/metasuche.html?feldinhalt1={x}&feldname1=Freitext"
+            "&gruppen%5B%5D=Deutscher+Bildungsserver&fisOnline=y&sucheMitBoost=y"
+            "&fieldLenNorm=n&bool1=AND&DBS=1&art=einfach"
+        ),
         "request": {
             "type": "get",
             "url": "https://www.bildungsserver.de",
-            "url_payload": lambda x: f"/metasuche/metasuche.html?feldinhalt1={x}&feldname1=Freitext&gruppen%5B%5D=Deutscher+Bildungsserver&fisOnline=y&sucheMitBoost=y&fieldLenNorm=n&bool1=AND&DBS=1&art=einfach",
+            "url_payload": lambda x: (
+                f"/metasuche/metasuche.html?feldinhalt1={x}&feldname1=Freitext"
+                "&gruppen%5B%5D=Deutscher+Bildungsserver&fisOnline=y&sucheMitBoost=y"
+                "&fieldLenNorm=n&bool1=AND&DBS=1&art=einfach"
+            ),
             "replacements": {
                 " ": "+",
                 "/": "%2F",
@@ -775,13 +808,13 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x.span.get_text()
+                    "access": lambda x: x.span.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 # "desc": {
                 #     "scope": "one",
@@ -801,11 +834,19 @@ SEARCH_SITES = [
     {
         "name": "forschung-und-lehre",
         "page_url": "https://www.forschung-und-lehre.de",
-        "search_url": lambda x: f"/suchergebnis?id=88&tx_kesearch_pi1%5Bsword%5D={x}&tx_kesearch_pi1%5Bpage%5D=1&tx_kesearch_pi1%5BresetFilters%5D=0&tx_kesearch_pi1%5BsortByField%5D=score&tx_kesearch_pi1%5BsortByDir%5D=desc",
+        "search_url": lambda x: (
+            f"/suchergebnis?id=88&tx_kesearch_pi1%5Bsword%5D={x}&tx_kesearch_pi1%5Bpage%5D=1"
+            "&tx_kesearch_pi1%5BresetFilters%5D=0&tx_kesearch_pi1%5BsortByField%5D=score"
+            "&tx_kesearch_pi1%5BsortByDir%5D=desc"
+        ),
         "request": {
             "type": "get",
             "url": "https://www.forschung-und-lehre.de",
-            "url_payload": lambda x: f"/suchergebnis?id=88&tx_kesearch_pi1%5Bsword%5D={x}&tx_kesearch_pi1%5Bpage%5D=1&tx_kesearch_pi1%5BresetFilters%5D=0&tx_kesearch_pi1%5BsortByField%5D=score&tx_kesearch_pi1%5BsortByDir%5D=desc",
+            "url_payload": lambda x: (
+                f"/suchergebnis?id=88&tx_kesearch_pi1%5Bsword%5D={x}&tx_kesearch_pi1%5Bpage%5D=1"
+                "&tx_kesearch_pi1%5BresetFilters%5D=0&tx_kesearch_pi1%5BsortByField%5D=score"
+                "&tx_kesearch_pi1%5BsortByDir%5D=desc"
+            ),
             "replacements": {
                 " ": "+",
                 "/": "%2F",
@@ -828,19 +869,19 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "span",
                     "class": "result-title",
-                    "access": lambda x: x.a.get_text()
+                    "access": lambda x: x.a.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "span",
                     "class": "result-teaser",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
             },
         },
@@ -873,19 +914,19 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "a",
                     "class": "list-group-item",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "list-group-item",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "a",
                     "class": "page-link",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
             },
         },
@@ -899,8 +940,14 @@ SEARCH_SITES = [
         "request": {
             "type": "get",
             "url": "https://cse.google.com",
-            "url_payload": lambda x: f"/cse/element/v1?rsz=filtered_cse&num=10&hl=de&source=gcsc&gss=.de&cselibv=8435450f13508ca1&cx=006046384882075175371%3Axnjsrxzqupw&q={x}&safe=off&cse_tok=AB-tC_6FkFxkHXZgRV_VzcjMT2zK%3A1718005954739&sort=&exp=cc%2Cpos%2Cdtsq-3&fexp=72519171%2C72519168&callback=google.search.cse.api1996",
-             "replacements": {
+            "url_payload": lambda x: (
+                "/cse/element/v1?rsz=filtered_cse&num=10&hl=de&source=gcsc&gss=.de"
+                f"&cselibv=8435450f13508ca1&cx=006046384882075175371%3Axnjsrxzqupw&q={x}"
+                "&safe=off&cse_tok=AB-tC_6FkFxkHXZgRV_VzcjMT2zK%3A1718005954739"
+                "&sort=&exp=cc%2Cpos%2Cdtsq-3"
+                "&fexp=72519171%2C72519168&callback=google.search.cse.api1996"
+            ),
+            "replacements": {
                 " ": "+",
                 "/": "%2F",
                 ":": "%3A",
@@ -918,8 +965,8 @@ SEARCH_SITES = [
                 "url": ["url"],
                 "desc": ["richSnippet", "metatags", "ogDescription"],
                 # "type": ["richSnippet", "metatags", "ogType"],
-            }
-        }
+            },
+        },
     },
     {
         "name": "spektrum",
@@ -932,7 +979,7 @@ SEARCH_SITES = [
             # "base64": "c2R3LXJvOnNkdy1ybw==",
             "url": "https://solr.spektrum.de",
             "url_payload": lambda x: f"/solr/sdw/select?q={x}",
-             "replacements": {
+            "replacements": {
                 " ": "%20",
                 "/": "\/",
             },
@@ -946,8 +993,8 @@ SEARCH_SITES = [
                 "desc": ["description"],
                 "type": ["artikeltyp"],
                 "publication": ["erschienen"],
-            }
-        }
+            },
+        },
     },
     {
         "name": "fr",
@@ -957,7 +1004,7 @@ SEARCH_SITES = [
             "type": "get",
             "url": "https://www.fr.de",
             "url_payload": lambda x: f"/suche/?tt=1&tx=&sb=&td=&fd=&qr={x}",
-             "replacements": {
+            "replacements": {
                 " ": "+",
                 "/": "%2F",
                 ":": "%3A",
@@ -979,25 +1026,25 @@ SEARCH_SITES = [
                     "scope": "one",
                     "type": "time",
                     "class": "id-DateTime",
-                    "access": lambda x: x["datetime"]
+                    "access": lambda x: x["datetime"],
                 },
                 "title": {
                     "scope": "one",
                     "type": "h3",
                     "class": "id-Teaser-el-content-headline",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
                 "url": {
                     "scope": "one",
                     "type": "a",
                     "class": "id-LinkOverlay-link",
-                    "access": lambda x: x["href"]
+                    "access": lambda x: x["href"],
                 },
                 "desc": {
                     "scope": "one",
                     "type": "span",
                     "class": "id-Teaser-el-content-text-text",
-                    "access": lambda x: x.get_text()
+                    "access": lambda x: x.get_text(),
                 },
             },
         },
@@ -1011,7 +1058,13 @@ SEARCH_SITES = [
         "request": {
             "type": "get",
             "url": "https://cse.google.com",
-            "url_payload": lambda x: f"/cse/element/v1?rsz=filtered_cse&num=10&hl=de&source=gcsc&gss=.de&cselibv=8435450f13508ca1&cx=5178ff0c134dc483f&q={x}&safe=off&cse_tok=AB-tC_5_bjNJ_0NmfesFwf9iejgs%3A1718009560670&lr=&cr=&gl=de&filter=1&sort=date&as_oq=&as_sitesearch=www.bild.de%2F*&exp=cc&fexp=72519171%2C72519168&callback=google.search.cse.api13697",
+            "url_payload": lambda x: (
+                "/cse/element/v1?rsz=filtered_cse&num=10&hl=de&source=gcsc&gss=.de"
+                f"&cselibv=8435450f13508ca1&cx=5178ff0c134dc483f&q={x}&safe=off"
+                "&cse_tok=AB-tC_5_bjNJ_0NmfesFwf9iejgs%3A1718009560670&lr=&cr=&gl=de&filter=1"
+                "&sort=date&as_oq=&as_sitesearch=www.bild.de%2F*&exp=cc"
+                "&fexp=72519171%2C72519168&callback=google.search.cse.api13697"
+            ),
             "replacements": {
                 " ": "+",
                 "/": "%2F",
@@ -1029,7 +1082,7 @@ SEARCH_SITES = [
                 "content": ["content"],
                 "desc": ["richSnippet", "metatags", "ogDescription"],
                 # "type": ["richSnippet", "metatags", "ogType"],
-            }
-        }
+            },
+        },
     },
 ]
